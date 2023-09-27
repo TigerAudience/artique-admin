@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="~{/fragments/link-header::link-header}"></head>
+<head th:replace="~{fragments/link-header::link-header}"></head>
 <head>
   <meta charset="UTF-8">
   <title>Datas</title>
   <link rel="stylesheet" type="text/css" href="/css/data-chart.css">
   <link rel="stylesheet" type="text/css" href="/css/beautiful-btn.css">
+  <link rel="stylesheet" type="text/css" href="/css/loading.css">
   <style>
     .first-info-block{
         word-wrap: break-word;
@@ -50,14 +51,50 @@
         margin-bottom: 10px;
         min-height: 38px;
     }
+    .third-after-info-block{
+        word-wrap: break-word;
+        padding: 7px;
+        background-color: #dedede;
+        width: 30%;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        min-height: 38px;
+    }
 
     .btn-form button{
         margin-right: 8px;
     }
+
+
+    #background-modal{
+        display: none;
+        background: rgba(0,0,0,.5);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    #delete-modal{
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,.3);
+        position: absolute;
+        overflow: hidden;
+        border-radius: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        width: 400px;
+        padding: 20px;
+        animation-name: modalopen;
+        animation-duration: var(--modal-duration);
+    }
   </style>
 </head>
 <body>
-<div th:replace="~{/fragments/header::header}"/>
+<div th:replace="~{fragments/header::header}"/>
 
 
 <div style="background-color: #f9fafc; padding-bottom: 20%;">
@@ -70,33 +107,138 @@
 
     <form th:action="@{./edit(musical-id=${musical_detail.id})}" th:object="${musical_form}" method="post">
       <div style="display: flex; padding-left: 1%; margin-bottom: 20px">
-      <div style="width: 20%">
-        <h4 style="padding-bottom: 10px">공연 이름</h4>
-        <div class="first-info-block" th:text="${musical_detail.name}"></div>
-        <input type="text" th:field="${musical_form.name}">
+        <div style="width: 40%">
+          <h4 style="padding-bottom: 10px">공연 이름</h4>
+          <div class="first-info-block" th:text="${musical_detail.name}"></div>
+          <input type="text" th:field="${musical_form.name}">
+        </div>
+        <div style="width: 20%">
+          <h4 style="padding-bottom: 10px">공연 상태</h4>
+          <div class="first-info-block" th:text="${musical_detail.musicalStatus}"></div>
+          <input type="text" th:field="${musical_form.musicalStatus}">
+        </div>
       </div>
-      <div style="width: 20%">
-        <h4 style="padding-bottom: 10px">공연 상태</h4>
-        <div class="first-info-block" th:text="${musical_detail.musicalStatus}"></div>
-        <input type="text" th:field="${musical_form.musicalStatus}">
-      </div>
-    </div>
       <div style="padding-left: 1%;margin-bottom: 30px">
         <h4>줄거리</h4>
         <div class="second-info-block" th:text="${musical_detail.plot}"></div>
         <textarea th:field="${musical_form.plot}"></textarea>
       </div>
+      <div style="display: flex; padding-left: 1%; margin-bottom: 20px">
+        <div style="width: 20%">
+          <h4 style="padding-bottom: 10px">시작 날짜</h4>
+          <div class="first-info-block" th:text="${musical_detail.beginDate}"></div>
+          <input type="date" th:field="${musical_form.beginDate}">
+        </div>
+        <div style="width: 20%">
+          <h4 style="padding-bottom: 10px">종료 날짜</h4>
+          <div class="first-info-block" th:text="${musical_detail.endDate}"></div>
+          <input type="date" th:field="${musical_form.endDate}">
+        </div>
+      </div>
+      <div style="padding-left: 1%;margin-bottom: 30px">
+        <h4>캐스팅</h4>
+        <div class="third-after-info-block" style="width: 50%" th:text="${musical_detail.casting}"></div>
+        <input type="text" th:field="${musical_form.casting}" style="width: 50%">
+      </div>
+      <div style="padding-left: 1%;margin-bottom: 30px">
+        <h4>러닝 타임</h4>
+        <div class="third-after-info-block" th:text="${musical_detail.runningTime}"></div>
+        <input type="text" th:field="${musical_form.runningTime}" style="width: 30%">
+      </div>
+      <div style="padding-left: 1%;margin-bottom: 30px">
+        <h4>공연 장소</h4>
+        <div class="third-after-info-block" th:text="${musical_detail.placeName}"></div>
+        <input type="text" th:field="${musical_form.placeName}" style="width: 30%">
+      </div>
+
+
+
       <div style="padding-left: 1%">
         <button type="submit">수정</button>
-        <button class="delete">삭제</button>
+        <button type="button" class="delete"
+                th:onclick="javascript:selectDeleteMusicalId([[${musical_detail.id}]],[[${musical_detail.name}]])">
+          삭제
+        </button>
         <button class="back">뒤로</button>
       </div>
     </form>
   </div>
 </div>
 
+<div th:replace="~{fragments/footer::footer}"/>
 
-<div th:replace="~{/fragments/footer::footer}"/>
+
+<div id="background-modal">
+  <div id="delete-modal" style="display:none">
+    <h5 style="padding-bottom: 15px">삭제 하시겠습니까?</h5>
+    <div style="width: fit-content;display: block;">
+      <div id="message-container">
+        <button id="delete-btn" style="margin-right: 20px">삭제</button>
+        <button id="cancel-btn" class="back">취소</button>
+      </div>
+      <div id="loading-modal" class="loading" style="display: none">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </body>
+<script>
+    const originPage=window.location;
+    const originBodyCss=document.body.style;
+    let musicalId;
+    let musicalName;
+    let deleteContainer = document.getElementById("background-modal");
+    let deleteBlock = document.getElementById("delete-modal");
+    let loadingBlock = document.getElementById("loading-modal");
+    document.getElementById('cancel-btn').addEventListener('click',function (){
+        cancelModal();
+    })
+    let tmpReq;
+    let tmpJson;
+    document.getElementById('delete-btn').addEventListener('click',function(){
+        console.log('click');
+        /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open('post','/data/delete?musical-id='+musicalId);
+        httpRequest.send();
+        loadingBlock.style.display='block';
+        document.getElementById("message-container").style.display='none';
+        httpRequest.onload = () => {
+            if(httpRequest.status === 200) {
+                const res = httpRequest.response;
+                console.log(res); //응답데이터 출력
+                alert('delete success');
+                window.location="/data";
+            } else {
+                //에러발생
+                tmpReq=httpRequest;
+                tmpJson=JSON.parse(httpRequest.responseText);
+                console.log(tmpJson['message']);
+                alert(tmpJson['message']); //응답상태와 응답 메시지 출력
+                window.location=originPage;
+            }
+        }
+    });
+    function selectDeleteMusicalId(id,name){
+        musicalId=id;
+        musicalName=name;
+        deleteBlock.firstElementChild.innerText=`${name} 삭제 하시겠습니까 ?`
+        document.body.style.overflowY='hidden';
+        openModal();
+    }
+    function openModal(){
+        deleteContainer.style.display='block';
+        deleteBlock.style.display='block';
+    }
+    function cancelModal(){
+        deleteContainer.style.display='none';
+        deleteBlock.style.display='none';
+        document.body.style=originBodyCss;
+    }
+</script>
 </html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="~{/fragments/link-header::link-header}"></head>
+<head th:replace="~{fragments/link-header::link-header}"></head>
 <head>
   <meta charset="UTF-8">
   <title>Datas</title>
@@ -28,7 +28,8 @@
         left: 50%;
         transform: translate(-50%, -50%);
         max-width: 100%;
-        width: 400px;
+        min-width: 400px;
+        width: max-content;
         padding: 20px;
         animation-name: modalopen;
         animation-duration: var(--modal-duration);
@@ -41,29 +42,24 @@
         let keyWord = document.getElementById('key-word-box').value;
         let link;
         if(keyWord==='')
-            link= `/data?page=1&size=10`;
+            link= `/data?page=1&size=20`;
         else
-            link = `/data?page=1&size=10&key-word=${keyWord}`;
+            link = `/data?page=1&size=20&key-word=${keyWord}`;
         location.href= link;
     }
 </script>
 <body>
 
-<div th:replace="~{/fragments/header::header}"/>
+<div th:replace="~{fragments/header::header}"/>
 
 
 <div style="background-color: #f9fafc; padding-bottom: 20%;">
   <div class="container" style="margin-left: auto; margin-right: auto; width: 90%;">
     <!-- 뮤지컬 목록 -->
     <div style="padding : 20px; padding-bottom: 5px; padding-left: 1%;">
-      <h1 class="problem-list-h1">
-        뮤지컬 목록
+      <h1 class="problem-list-h1" th:text="'뮤지컬 목록 ('+${total_page_count}+')'">
       </h1>
     </div>
-    <!--
-    <div style="height: 3px; margin : 5px 15px 5px 1%; background-color: gray;">
-    </div>
-    -->
     <div style="display: flex;">
       <div style="width: 100%;">
         <!-- 뮤지컬 옵션 검색 블럭-->
@@ -72,7 +68,7 @@
           <div style="display:flex;">
             <div style="width: 30%;">
               <div class="input-box" >
-                <input type="text" id="key-word-box">
+                <input type="text" id="key-word-box" placeholder="이름 검색">
               </div>
             </div>
             <div style="width: 50%;">
@@ -124,15 +120,27 @@
             </thead>
             <tbody style="font-size: 18px;">
             <tr th:each="musical : ${musicals_info}">
-              <td class="title" th:text="${musical.name}">title title title</td>
-              <td class="status" th:text="${musical.musicalStatus}">now per</td>
+              <td class="title">
+                <div th:text="${musical.name}"></div>
+              </td>
+              <td class="status">
+                <div th:text="${musical.musicalStatus}"></div>
+              </td>
               <td class="plot">
                   <div th:text="${musical.plot}"></div>
               </td>
-              <td class="review-count" th:text="${musical.reviewCount}">30</td>
-              <td class="begin-date" th:text="${musical.beginDate}">2023/09/01</td>
-              <td class="end-date" th:text="${musical.endDate}">2023/09/30</td>
-              <td class="casting" th:text="${musical.casting}">lee,joe,kim,park,byun,sul</td>
+              <td class="review-count">
+                <div th:text="${musical.reviewCount}"></div>
+              </td>
+              <td class="begin-date">
+                <div th:text="${musical.beginDate}"></div>
+              </td>
+              <td class="end-date">
+                <div th:text="${musical.endDate}"></div>
+              </td>
+              <td class="casting">
+                <div th:text="${musical.casting}"></div>
+              </td>
               <td class="poster-url">
                 <a th:href="${musical.posterUrl}">
                   link</a>
@@ -148,21 +156,22 @@
       </div>
 
     </div>
-
     <div style="width: 100%; padding: 20px;">
       <div class="pagination">
-        <a href="#">&laquo;</a>
-        <a th:each="page : ${total_page}" th:href="@{/data(page=${page},size=10,key-word=${now_key_word})}" th:text="${page}"></a>
-        <a href="#">&raquo;</a>
+        <a th:href="@{/data(page=${page}-10,size=20,key-word=${now_key_word})}">&laquo;</a>
+        <a th:each="page : ${total_page}" th:href="@{/data(page=${page},size=20,key-word=${now_key_word})}"
+           th:text="${page}" th:style="${now_page_number == page ? 'font-weight: bold; color:blue;' : ''}"> </a>
+        <a th:href="@{/data(page=${page}+10,size=20,key-word=${now_key_word})}">&raquo;</a>
       </div>
     </div>
   </div>
 </div>
-<div th:replace="~{/fragments/footer::footer}"/>
+<div th:replace="~{fragments/footer::footer}"/>
 
 <div id="background-modal">
   <div id="delete-modal" style="display:none">
-      <h5 style="padding-bottom: 15px">삭제 하시겠습니까?</h5>
+      <h5 style="padding-bottom: 15px"></h5>
+      <h6 style="padding-bottom: 15px">삭제 하시겠습니까?</h6>
       <div style="width: fit-content;display: block;">
         <div id="message-container">
           <button id="delete-btn" style="margin-right: 20px">삭제</button>
@@ -220,7 +229,7 @@
   function selectDeleteMusicalId(id,name){
       musicalId=id;
       musicalName=name;
-      deleteBlock.firstElementChild.innerText=`${name} 삭제 하시겠습니까 ?`
+      deleteBlock.firstElementChild.innerText=`[${name}]`
       document.body.style.overflowY='hidden';
       openModal();
   }

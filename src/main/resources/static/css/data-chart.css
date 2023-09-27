@@ -68,17 +68,17 @@ tr {
     text-align: center;
 }
 .title {
-    width: 15%;
+    width: 25%;
     text-align: center;
     line-height: 150%;
     letter-spacing: -0.009em;
     color: rgb(0, 0, 0);
 }
 .plot {
-    width: 25%;
+    width: 15%;
     text-align: center;
 }
-.plot div{
+.musical-tb tr td div{
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -185,7 +185,7 @@ input[type=text] {
     font-weight: 800;
 }
 .pagination {
-    width: 50%;
+    width: max-content;
     margin: auto;
 }
 .pagination a {

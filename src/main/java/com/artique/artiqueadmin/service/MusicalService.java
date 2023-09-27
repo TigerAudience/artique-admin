@@ -4,7 +4,9 @@ import com.artique.artiqueadmin.dto.musical.MusicalChart;
 import com.artique.artiqueadmin.dto.musical.MusicalDatas;
 import com.artique.artiqueadmin.dto.musical.MusicalDetail;
 import com.artique.artiqueadmin.dto.musical.MusicalForm;
+import com.artique.artiqueadmin.entity.DeletedMusical;
 import com.artique.artiqueadmin.entity.Musical;
+import com.artique.artiqueadmin.repository.DeletedMusicalRepository;
 import com.artique.artiqueadmin.repository.MusicalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MusicalService {
   private final MusicalRepository musicalRepository;
+  private final DeletedMusicalRepository deletedMusicalRepository;
   public MusicalDatas getMusicals(int page, int size,String keyWord){
     List<MusicalChart> musicals = new ArrayList<>();
     PageRequest pageRequest = PageRequest.of(page,size);
@@ -43,6 +46,7 @@ public class MusicalService {
   @Transactional
   public void delete(String musicalId){
     Musical musical = musicalRepository.findById(musicalId).orElseThrow(()->new RuntimeException("invalid id"));
+    deletedMusicalRepository.save(DeletedMusical.of(musical));
     musicalRepository.delete(musical);
   }
 }

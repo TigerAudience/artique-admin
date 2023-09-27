@@ -12,4 +12,7 @@ public interface MusicalRepository extends JpaRepository<Musical,String> {
   Page<Musical> findAllInPage(Pageable pageable, @Param("key_word")String keyWord);
   @Query("select m from Musical m")
   Page<Musical> findAll(Pageable pageable);
+
+  @Query(value = "select COUNT(*) from musical m",nativeQuery = true)
+  Integer countMusical();
 }
