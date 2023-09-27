@@ -1,11 +1,16 @@
 package com.artique.artiqueadmin.service;
 
 import com.artique.artiqueadmin.dto.musical.MusicalChart;
+import com.artique.artiqueadmin.dto.musical.MusicalDatas;
 import com.artique.artiqueadmin.dto.musical.MusicalDetail;
+import com.artique.artiqueadmin.dto.musical.MusicalForm;
 import com.artique.artiqueadmin.entity.Musical;
 import com.artique.artiqueadmin.repository.MusicalRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,26 +19,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MusicalService {
   private final MusicalRepository musicalRepository;
-  public List<MusicalChart> getMusicals(){
+  public MusicalDatas getMusicals(int page, int size,String keyWord){
     List<MusicalChart> musicals = new ArrayList<>();
-    List<Musical> musicalEntities = musicalRepository.findAll();
-    for(int i=0;i<5;i++){
-      musicals.add(createMockMusical(i%2));
-    }
+    PageRequest pageRequest = PageRequest.of(page,size);
+    Page<Musical> musicalEntities = keyWord==null ?
+            musicalRepository.findAll(pageRequest) : musicalRepository.findAllInPage(pageRequest,keyWord);
     for(Musical m : musicalEntities){
       musicals.add(MusicalChart.of(m));
     }
-    return musicals;
-  }
-  public MusicalChart createMockMusical(int idx){
-    return new MusicalChart("id","title title title","2023/09/01",
-            "2023/09/30","place","castingsgsg",
-            idx==0?"plotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplotplot":null
-            ,"http://www.kopis.or.kr/upload/pfmPoster/PF_PF218497_230516_112335.jpg"
-            ,"start",30);
+    return new MusicalDatas(musicals,musicalEntities.getPageable().getPageNumber(),
+            musicalEntities.getTotalPages(),musicalEntities.getSize());
   }
 
   public MusicalDetail getDetail(String id){
     return MusicalDetail.of(musicalRepository.findById(id).orElseThrow(()->new RuntimeException("invalid id")));
+  }
+
+  @Transactional
+  public void update(MusicalForm form,String musicalId){
+    Musical musical = musicalRepository.findById(musicalId).orElseThrow(()->new RuntimeException("invalid id"));
+    musical.update(form);
+  }
+  @Transactional
+  public void delete(String musicalId){
+    Musical musical = musicalRepository.findById(musicalId).orElseThrow(()->new RuntimeException("invalid id"));
+    musicalRepository.delete(musical);
   }
 }
