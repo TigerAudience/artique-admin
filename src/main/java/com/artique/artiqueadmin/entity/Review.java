@@ -30,4 +30,6 @@ public class Review {
   @ManyToOne
   private Musical musical;
   private ZonedDateTime createdAt;
+  private boolean shortSpoiler;
+  private boolean longSpoiler;
 }

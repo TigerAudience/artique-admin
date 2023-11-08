@@ -19,5 +19,7 @@ public class Member {
   private String profileUrl;
   private String introduce;
   private String password;
+  private Integer warningCount;
+  private ZonedDateTime banDate;
   private ZonedDateTime createdAt;
 }
