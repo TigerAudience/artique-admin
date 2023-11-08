@@ -1,13 +1,11 @@
 package com.artique.artiqueadmin.controller;
 
+import com.artique.artiqueadmin.entity.ReportType;
 import com.artique.artiqueadmin.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/report")
@@ -21,8 +19,14 @@ public class ReportController {
     return null;
   }
   @PostMapping
-  public String reports(@RequestParam(value = "report-id")Long reportId){
-
+  public String reports(@RequestParam(value = "report-id")Long reportId,
+                        @RequestParam(value = "type")ReportType reportType){
+    reportService.reportSuccess(reportId,reportType);
+    return "redirect:/report";
+  }
+  @DeleteMapping
+  public String reject(@RequestParam(value = "report-id")Long reportId){
+    reportService.reportFail(reportId);
     return "redirect:/report";
   }
 }

@@ -2,6 +2,7 @@ package com.artique.artiqueadmin.service;
 
 import com.artique.artiqueadmin.entity.Member;
 import com.artique.artiqueadmin.entity.Report;
+import com.artique.artiqueadmin.entity.ReportType;
 import com.artique.artiqueadmin.entity.Review;
 import com.artique.artiqueadmin.repository.MemberRepository;
 import com.artique.artiqueadmin.repository.ReportRepository;
@@ -19,7 +20,7 @@ public class ReportService {
   private final MemberRepository memberRepository;
 
   @Transactional
-  public void reportSuccess(Long reportId){
+  public void reportSuccess(Long reportId, ReportType reportType){
     //report 성공 시, member 제제 처리(member count 증가, 제제 대상일 때 정지기간 설정), report 삭제 처리
     Report report = reportRepository.findById(reportId)
             .orElseThrow(()->new RuntimeException("invalid report id"));
@@ -28,7 +29,11 @@ public class ReportService {
     Member member = memberRepository.findById(review.getMember().getId())
             .orElseThrow(()->new RuntimeException("invalid member id"));
 
-    restrictMember(member);
+    if(reportType.warnMember())
+      restrictMember(member);
+    else
+      spoiler(review);
+
     deleteReport(report);
   }
 
@@ -39,6 +44,9 @@ public class ReportService {
             .orElseThrow(()->new RuntimeException("invalid report id"));
 
     deleteReport(report);
+  }
+  private void spoiler(Review review){
+    review.changeSpoiler();
   }
   private void restrictMember(Member member){
     member.increaseBanCount();

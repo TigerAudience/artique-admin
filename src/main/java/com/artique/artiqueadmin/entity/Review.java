@@ -32,4 +32,9 @@ public class Review {
   private ZonedDateTime createdAt;
   private boolean shortSpoiler;
   private boolean longSpoiler;
+
+  public void changeSpoiler(){
+    this.shortSpoiler=true;
+    this.longSpoiler=true;
+  }
 }
