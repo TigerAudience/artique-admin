@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/link-header::link-header}"></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Datas</title>
+  <link rel="stylesheet" type="text/css" href="/css/data-chart.css">
+  <link rel="stylesheet" type="text/css" href="/css/beautiful-btn.css">
+  <link rel="stylesheet" type="text/css" href="/css/loading.css">
+  <style>
+      input[type=text] {
+          width: 80%;
+          height: 37.6px;
+          font-size: 15px;
+          border: 0;
+          border-radius: 15px;
+          outline: none;
+          padding-left: 10px;
+          background-color: white;
+          color: black;
+          border: solid 2px black;
+          font-weight: 700;
+      }
+      input[type=password] {
+           width: 80%;
+           height: 37.6px;
+           font-size: 15px;
+           border: 0;
+           border-radius: 15px;
+           outline: none;
+           padding-left: 10px;
+           background-color: white;
+           color: black;
+           border: solid 2px black;
+           font-weight: 700;
+       }
+      textarea{
+          width: 80%;
+          height: 150px;
+          font-size: 15px;
+          border: 0;
+          border-radius: 15px;
+          outline: none;
+          padding-left: 10px;
+          background-color: white;
+          color: black;
+          border: solid 2px black;
+          font-weight: 700;
+      }
+
+      .btn-form button{
+          margin-right: 8px;
+      }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/header::header}"/>
+
+
+<div style="background-color: #f9fafc; padding-bottom: 20%;">
+  <div class="container" style="margin-left: auto; margin-right: auto; width: 90%;"><!-- 뮤지컬 목록 -->
+    <div style="padding : 20px; padding-bottom: 5px; padding-left: 1%;">
+      <h1 class="problem-list-h1">
+        로그인
+      </h1>
+    </div>
+
+    <form th:action="@{./login}" th:object="${login_form}"
+          method="post" onsubmit="beforeEdit()">
+      <div style="display: flex; padding-left: 1%; margin-bottom: 20px">
+        <div style="width: 30%">
+          <h4 style="padding-bottom: 10px">아이디</h4>
+          <input id="login-id" type="text" value="id" maxlength="20" th:field="${login_form.id}">
+        </div>
+        <div style="width: 30%">
+          <h4 style="padding-bottom: 10px">비밀번호</h4>
+          <input id="login-pw" type="password" value="password" maxlength="20" th:field="${login_form.password}">
+        </div>
+      </div>
+
+
+
+      <div style="padding-left: 1%">
+        <button type="submit" id="login-btn" onclick="return false;">로그인</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer::footer}"/>
+
+</body>
+<script>
+    let idDom=document.getElementById("login-id");
+    let pwDom=document.getElementById("login-pw");
+    document.getElementById('login-btn').addEventListener('click',function(){
+        console.log('login click');
+        /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+        let id = idDom.value;
+        let pw = pwDom.value;
+        console.log(id);
+        console.log(pw);
+        let data = {
+            "id": id,
+            "password": pw
+        };
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.open('post','/login');
+        httpRequest.setRequestHeader("content-type", "application/json");
+        httpRequest.send(JSON.stringify(data));
+        httpRequest.onload = () => {
+            if(httpRequest.status === 200) {
+                const res = httpRequest.response;
+                console.log(res); //응답데이터 출력
+                alert('로그인 성공.');
+                window.location="/";
+            } else {
+                //에러발생
+                tmpReq=httpRequest;
+                tmpJson=JSON.parse(httpRequest.responseText);
+                console.log('로그인 실패');
+                alert('로그인 실패');
+                //alert(tmpJson['message']); //응답상태와 응답 메시지 출력
+                window.location="/login";
+            }
+        }
+    });
+</script>
+</html>

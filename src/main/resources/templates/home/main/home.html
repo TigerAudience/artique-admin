@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/link-header::link-header}"></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Datas</title>
+  <link rel="stylesheet" type="text/css" href="/css/data-chart.css">
+  <link rel="stylesheet" type="text/css" href="/css/beautiful-btn.css">
+  <link rel="stylesheet" type="text/css" href="/css/loading.css">
+  <style>
+      input[type=text] {
+          width: 80%;
+          height: 37.6px;
+          font-size: 15px;
+          border: 0;
+          border-radius: 15px;
+          outline: none;
+          padding-left: 10px;
+          background-color: white;
+          color: black;
+          border: solid 2px black;
+          font-weight: 700;
+      }
+      textarea{
+          width: 80%;
+          height: 150px;
+          font-size: 15px;
+          border: 0;
+          border-radius: 15px;
+          outline: none;
+          padding-left: 10px;
+          background-color: white;
+          color: black;
+          border: solid 2px black;
+          font-weight: 700;
+      }
+      .btn-form button{
+          margin-right: 8px;
+      }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/header::header}"/>
+
+
+<div style="background-color: #f9fafc; padding-bottom: 20%;">
+  <div class="container" style="margin-left: auto; margin-right: auto; width: 90%;">
+    <div style="padding : 20px; padding-bottom: 5px; padding-left: 1%;">
+      <h1 class="problem-list-h1">
+        메뉴
+      </h1>
+    </div>
+    <div style="padding-left: 1%;margin-bottom: 30px">
+      <button class="edit" onclick="location.href='/data'" style="width: auto">공연 데이터 목록</button>
+    </div>
+    <div style="padding-left: 1%;margin-bottom: 30px">
+      <button class="edit" onclick="location.href='/report'" style="width: auto">신고 데이터 목록</button>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer::footer}"/>
+
+
+
+</body>
+</html>

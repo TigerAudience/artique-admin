@@ -8,10 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/login")
@@ -20,10 +18,15 @@ public class AuthorizationController {
   private final LoginService loginService;
   @PostMapping
   @ResponseBody
-  public String login(HttpServletRequest request, LoginReq loginReq){
+  public String login(HttpServletRequest request, @RequestBody LoginReq loginReq){
     HttpSession session = request.getSession();
     AdminSession adminInfo = loginService.login(loginReq);
     session.setAttribute("LOGIN_MEMBER",adminInfo);
     return "ok";
+  }
+  @GetMapping
+  public String loginForm(Model model){
+    model.addAttribute("login_form",new LoginReq());
+    return "home/main/login";
   }
 }

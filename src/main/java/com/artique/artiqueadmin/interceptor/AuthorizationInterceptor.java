@@ -10,9 +10,11 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    Object o = request.getAttribute("LOGIN_MEMBER");
-    if(o==null)
-      throw new InterceptorException("invalid session id",this.getClass().toString());
+    Object o = request.getSession().getAttribute("LOGIN_MEMBER");
+    if(o==null) {
+      response.sendRedirect("/login");
+      return false;
+    }
     return HandlerInterceptor.super.preHandle(request, response, handler);
   }
 }
