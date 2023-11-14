@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
   @GetMapping("/")
-  public String redirectToData(){
-    return "redirect:/data";
+  public String mainPage(){
+    return "home/main/home";
   }
 }
