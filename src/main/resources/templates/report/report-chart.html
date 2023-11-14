@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments/link-header::link-header}"></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Datas</title>
+  <link rel="stylesheet" type="text/css" href="/css/report-chart.css">
+  <link rel="stylesheet" type="text/css" href="/css/beautiful-btn.css">
+  <link rel="stylesheet" type="text/css" href="/css/loading.css">
+  <style>
+    #background-modal{
+        display: none;
+        background: rgba(0,0,0,.5);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    #delete-modal{
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,.3);
+        position: absolute;
+        overflow: hidden;
+        border-radius: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        min-width: 400px;
+        width: max-content;
+        padding: 20px;
+        animation-name: modalopen;
+        animation-duration: var(--modal-duration);
+    }
+  </style>
+</head>
+
+<script>
+    function search(){
+        let keyWord = document.getElementById('key-word-box').value;
+        let link;
+        if(keyWord==='')
+            link= `/report?page=1&size=200`;
+        else
+            link = `/report?page=1&size=200&key-word=${keyWord}`;
+        location.href= link;
+    }
+</script>
+<body>
+
+<div th:replace="~{fragments/header::header}"/>
+
+
+<div style="background-color: #f9fafc; padding-bottom: 20%;">
+  <div class="container" style="margin-left: auto; margin-right: auto; width: 90%;">
+    <!-- 뮤지컬 목록 -->
+    <div style="padding : 20px; padding-bottom: 5px; padding-left: 1%;">
+      <h1 class="problem-list-h1" th:text="'신고 접수 목록 ('+${total_report_count}+')'">
+      </h1>
+    </div>
+    <div style="display: flex;">
+      <div style="width: 100%;">
+        <!-- 뮤지컬 옵션 검색 블럭-->
+        <div class="option-box" style="position: relative; text-align: initial; width: 100%;
+                    padding-bottom: 10px;">
+          <div style="display:flex;">
+            <div style="width: 30%;">
+              <div class="input-box" >
+                <input type="text" id="key-word-box" placeholder="신고 검색">
+              </div>
+            </div>
+            <div style="width: 50%;">
+              <div style="display: none">
+                <div class="dropdown">
+                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                     data-bs-toggle="dropdown" aria-expanded="false">
+                    정렬
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">2020</a></li>
+                    <li><a class="dropdown-item" href="#">2021</a></li>
+                    <li><a class="dropdown-item" href="#">2022</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div style="width: 8%; margin-left: 12%;">
+              <!--
+              <a id="search-button" class="btn btn-secondary"
+                 style="color: black; font-weight: 700; width: 100%; max-width: 72px;float: right;">
+                검색
+              </a>
+              -->
+              <form style="padding-left: 1%" class="btn-form">
+                <button onclick="search(); return false;"style="width: 100%; max-width: 72px;float: right;">검색</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 뮤지컬 리스트 블럭-->
+        <div class="problem-block" style="width: 100%; background-color: white;">
+          <table class="ChallengesTablestyle__Table-sc-wt0ety-2 AHXna musical-tb" style="width: 100%; margin: auto;
+                border: solid 1px #eaeaea; table-layout:fixed;">
+            <thead style="text-align: center;">
+            <tr>
+              private Long reportId;
+              private String type;
+
+              //review
+              private Long reviewId;
+              private String shortReview;
+              private Double starRating;
+              private Long thumbsUp;
+              private ZonedDateTime reviewCreatedAt;
+
+              //member
+              private String memberId;
+              private String memberNickname;
+              private Integer warningCount;
+
+              //report member
+              private String reportMemberId;
+              private String reportMemberNickname;
+              private Integer reportCount;
+              private ZonedDateTime reportCreatedAt;
+              <th class="report-type">신고 내용</th>
+              <th class="report-member">신고자</th>
+              <th class="short-review">한줄 리뷰</th>
+              <th class="review-thumbsUp">공감 수</th>
+              <th class="report-created-at">신고 날짜</th>
+              <th class="review-created-at">리뷰 작성일</th>
+              <th class="report-member-report-count">신고</th>
+              <th class="member-warning-count">경고</th>
+              <th class="edit">수정</th>
+              <th class="delete">삭제</th>
+            </tr>
+            </thead>
+            <tbody style="font-size: 18px;">
+            <tr th:each="report : ${reports_info}">
+              <td class="report-type">
+                <div th:text="${report.type}"></div>
+              </td>
+              <td class="report-member">
+                <div th:text="${report.memberNickname}"></div>
+              </td>
+              <td class="short-review">
+                  <div th:text="${report.shortReview}"></div>
+              </td>
+              <td class="review-thumbsUp">
+                <div th:text="${report.thumbsUp}"></div>
+              </td>
+              <td class="report-created-at">
+                <div th:text="${report.reportCreatedAt}"></div>
+              </td>
+              <td class="review-created-at">
+                <div th:text="${report.reviewCreatedAt}"></div>
+              </td>
+              <td class="report-member-report-count">
+                <div th:text="${report.reportCount}"></div>
+              </td>
+              <td class="member-warning-count">
+                <div th:text="${report.warningCount}"></div>
+              </td>
+              <td class="edit"><a style="color: #0078ff" th:href="@{/report/detail(report-id=${report.reportId})}">자세히</a></td>
+              <td class="delete"><a id="open-modal-btn" style="color: red; cursor: pointer"
+              th:onclick="javascript:selectDeleteMusicalId([[${report.reportId}]],[[${report.shortReview}]])">삭제</a></td>
+            </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div th:replace="~{fragments/footer::footer}"/>
+
+<div id="background-modal">
+  <div id="delete-modal" style="display:none">
+      <h5 style="padding-bottom: 15px"></h5>
+      <h6 style="padding-bottom: 15px">삭제하시겠습니까?</h6>
+      <div style="width: fit-content;display: block;">
+        <div id="message-container">
+          <button id="delete-btn" style="margin-right: 20px">삭제</button>
+          <button id="cancel-btn" class="back">취소</button>
+        </div>
+        <div id="loading-modal" class="loading" style="display: none">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+
+</body>
+<script th:inline="javascript">
+    const originPage=window.location;
+    const originBodyCss=document.body.style;
+    let reportId;
+    let reportName;
+    let deleteContainer = document.getElementById("background-modal");
+    let deleteBlock = document.getElementById("delete-modal");
+    let loadingBlock = document.getElementById("loading-modal");
+    document.getElementById('cancel-btn').addEventListener('click',function (){
+        cancelModal();
+    })
+    let tmpReq;
+    let tmpJson;
+    document.getElementById('delete-btn').addEventListener('click',function(){
+        console.log('click');
+        /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open('post','/report/delete?report-id='+reportId);
+        httpRequest.send();
+        loadingBlock.style.display='block';
+        document.getElementById("message-container").style.display='none';
+        httpRequest.onload = () => {
+            if(httpRequest.status === 200) {
+                const res = httpRequest.response;
+                console.log(res); //응답데이터 출력
+                alert('삭제되었습니다.');
+                window.location=originPage;
+            } else {
+                //에러발생
+                tmpReq=httpRequest;
+                tmpJson=JSON.parse(httpRequest.responseText);
+                console.log(tmpJson['message']);
+                alert(tmpJson['message']); //응답상태와 응답 메시지 출력
+                window.location=originPage;
+            }
+        }
+    });
+  function selectDeleteMusicalId(id,name){
+      reportId=id;
+      reportName=name;
+      deleteBlock.firstElementChild.innerText=`[${name}]`
+      document.body.style.overflowY='hidden';
+      openModal();
+  }
+  function openModal(){
+      deleteContainer.style.display='block';
+      deleteBlock.style.display='block';
+  }
+  function cancelModal(){
+      deleteContainer.style.display='none';
+      deleteBlock.style.display='none';
+      document.body.style=originBodyCss;
+  }
+</script>
+</html>

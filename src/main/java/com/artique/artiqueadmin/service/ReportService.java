@@ -8,8 +8,12 @@ import com.artique.artiqueadmin.repository.MemberRepository;
 import com.artique.artiqueadmin.repository.ReportRepository;
 import com.artique.artiqueadmin.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.artique.artiqueadmin.dto.report.ReportResponse.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,6 +22,19 @@ public class ReportService {
   private final ReportRepository reportRepository;
   private final ReviewRepository reviewRepository;
   private final MemberRepository memberRepository;
+
+  public ReportViewList getReports(int page,int size,String keyword){
+    PageRequest pageRequest = PageRequest.of(page,size);
+    Slice<Report> reports;
+    if(keyword==null)
+      reports = reportRepository.getReportSlice(pageRequest);
+    else
+      reports = reportRepository.getReportSliceWithKeyword(keyword,pageRequest);
+    return ReportViewList.of(reports);
+  }
+  public Long getReportCount(){
+    return reportRepository.count();
+  }
 
   @Transactional
   public void reportSuccess(Long reportId, ReportType reportType){

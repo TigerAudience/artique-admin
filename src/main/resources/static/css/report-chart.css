@@ -1,0 +1,208 @@
+#wrap {
+    min-height: 35vh;
+    position: relative;
+    width: 100%;
+}
+.header{
+    padding-left: var(--bs-gutter-x,.75rem);
+    padding-top: 30px;
+    padding-bottom: 3px;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+
+footer {
+    width: 100%;
+    height: 110px;
+    /* 내용물에 따라 알맞는 값 설정 */
+    bottom: 0px;
+    position: absolute;
+}
+.nav-link{
+    color: #0078ff;
+}
+
+a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+p{
+    margin-bottom: 0px;
+}
+svg {
+
+    width: 1rem;
+    height: 1rem;
+    color: rgb(0, 120, 255);
+}
+
+/* 문제 리스트 페이지 드롭다운 */
+.btn-secondary {
+    width: 20%;
+    max-width: 90px;
+}
+
+.dropdown-menu {
+    width: 80%;
+}
+
+/* 문제 리스트 표 설정값 */
+tr>th {
+    padding: 7px;
+}
+
+tr>td {
+    padding: 10px 7px 10px 7px;
+}
+
+tr {
+    border-bottom: 0.0625rem solid rgb(215, 226, 235);
+}
+
+/*------*/
+
+.status {
+    width: 8%;
+    text-align: center;
+}
+.report-type {
+    width: 12%;
+    text-align: center;
+    line-height: 150%;
+    letter-spacing: -0.009em;
+    color: rgb(0, 0, 0);
+}
+.report-member {
+    width: 15%;
+    text-align: center;
+}
+.musical-tb tr td div{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.short-review{
+    width: 35%;
+    text-align: center
+}
+
+.review-thumbsUp {
+    width: 8%;
+    text-align: center;
+}
+.report-created-at{
+    width: 10%;
+    text-align: center;
+}
+.review-created-at {
+    width: 11%;
+    text-align: center;
+}
+.report-member-report-count {
+    width: 7%;
+    text-align: center;
+}
+.member-warning-count {
+    width: 5%;
+    text-align: center;
+}
+.edit {
+    width: 8%;
+    text-align: center;
+}
+.delete {
+    width: 5%;
+    text-align: center;
+}
+
+input[type=text] {
+    width: 95%;
+    height: 37.6px;
+    font-size: 15px;
+    border: 0;
+    border-radius: 15px;
+    outline: none;
+    padding-left: 10px;
+    background-color: white;
+    color: black;
+    border: solid 1px #eaeaea;
+    font-weight: 700;
+}
+
+
+.part-title {
+
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 0.0625rem;
+    font-size: 0.75rem;
+    color: rgb(120, 144, 160);
+    line-height: 150%;
+}
+
+
+.pagination-btn button {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 3px;
+    color: white;
+}
+
+.ChallengesTablestyle__Table-sc-wt0ety-2 th {
+    font-size: 18px;
+    color: #98a8b9;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: black;
+    border: solid 1px #eaeaea;
+    font-weight: 700;
+}
+
+.problem-list-h1 {
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 140%;
+    letter-spacing: -0.009em;
+}
+.problem-list-p{
+    margin: 0px;
+    line-height: 160%;
+    letter-spacing: -0.009em;
+}
+.user-block-name{
+    padding: 20px; color: #0078ff; font-weight: 700;
+    font-size: 22px;
+}
+.user-block-info p{
+    color: #98a8b9;
+}
+.header-menu li{
+    width: 20%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+}
+.pagination {
+    width: max-content;
+    margin: auto;
+}
+.pagination a {
+    margin: auto;
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+
+
+.musical-tb td{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
