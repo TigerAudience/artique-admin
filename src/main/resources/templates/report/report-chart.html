@@ -34,6 +34,15 @@
         animation-name: modalopen;
         animation-duration: var(--modal-duration);
     }
+    .loading span {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin: 5px;
+        background-color: grey;
+        border-radius: 50%;
+        animation: loading 1s linear infinite;
+    }
   </style>
 </head>
 
@@ -68,7 +77,7 @@
           <div style="display:flex;">
             <div style="width: 30%;">
               <div class="input-box" >
-                <input type="text" id="key-word-box" placeholder="신고 검색">
+                <input type="text" id="key-word-box" placeholder="신고자 닉네임 검색">
               </div>
             </div>
             <div style="width: 50%;">
@@ -100,42 +109,22 @@
           </div>
         </div>
 
-        <!-- 뮤지컬 리스트 블럭-->
+        <!-- 신고 리스트 블럭-->
         <div class="problem-block" style="width: 100%; background-color: white;">
           <table class="ChallengesTablestyle__Table-sc-wt0ety-2 AHXna musical-tb" style="width: 100%; margin: auto;
                 border: solid 1px #eaeaea; table-layout:fixed;">
             <thead style="text-align: center;">
             <tr>
-              private Long reportId;
-              private String type;
-
-              //review
-              private Long reviewId;
-              private String shortReview;
-              private Double starRating;
-              private Long thumbsUp;
-              private ZonedDateTime reviewCreatedAt;
-
-              //member
-              private String memberId;
-              private String memberNickname;
-              private Integer warningCount;
-
-              //report member
-              private String reportMemberId;
-              private String reportMemberNickname;
-              private Integer reportCount;
-              private ZonedDateTime reportCreatedAt;
               <th class="report-type">신고 내용</th>
-              <th class="report-member">신고자</th>
+              <th class="report-member">피신고자</th>
               <th class="short-review">한줄 리뷰</th>
               <th class="review-thumbsUp">공감 수</th>
               <th class="report-created-at">신고 날짜</th>
-              <th class="review-created-at">리뷰 작성일</th>
               <th class="report-member-report-count">신고</th>
               <th class="member-warning-count">경고</th>
-              <th class="edit">수정</th>
-              <th class="delete">삭제</th>
+              <th class="edit">자세히</th>
+              <th class="edit">report</th>
+              <th class="delete">reject</th>
             </tr>
             </thead>
             <tbody style="font-size: 18px;">
@@ -155,9 +144,6 @@
               <td class="report-created-at">
                 <div th:text="${report.reportCreatedAt}"></div>
               </td>
-              <td class="review-created-at">
-                <div th:text="${report.reviewCreatedAt}"></div>
-              </td>
               <td class="report-member-report-count">
                 <div th:text="${report.reportCount}"></div>
               </td>
@@ -165,8 +151,10 @@
                 <div th:text="${report.warningCount}"></div>
               </td>
               <td class="edit"><a style="color: #0078ff" th:href="@{/report/detail(report-id=${report.reportId})}">자세히</a></td>
-              <td class="delete"><a id="open-modal-btn" style="color: red; cursor: pointer"
-              th:onclick="javascript:selectDeleteMusicalId([[${report.reportId}]],[[${report.shortReview}]])">삭제</a></td>
+              <td class="edit"><a style="color: #0078ff; cursor: pointer"
+                                    th:onclick="javascript:report_process([[${report.reportId}]],[[${report.type}]])">report</a></td>
+              <td class="delete"><a style="color: red; cursor: pointer"
+              th:onclick="javascript:reject_report([[${report.reportId}]])">reject</a></td>
             </tr>
             </tbody>
           </table>
@@ -176,19 +164,18 @@
 
     </div>
   </div>
+  <div style="width: 100%; padding: 20px;">
+    <div class="pagination">
+      <a th:if="${page>1}"th:href="@{/report(page=${page}-1,size=200,key-word=${now_key_word})}">&laquo;</a>
+      <a th:if="${hasNext==true}" th:href="@{/report(page=${page}+1,size=200,key-word=${now_key_word})}">&raquo;</a>
+    </div>
+  </div>
 </div>
 <div th:replace="~{fragments/footer::footer}"/>
 
 <div id="background-modal">
   <div id="delete-modal" style="display:none">
-      <h5 style="padding-bottom: 15px"></h5>
-      <h6 style="padding-bottom: 15px">삭제하시겠습니까?</h6>
-      <div style="width: fit-content;display: block;">
-        <div id="message-container">
-          <button id="delete-btn" style="margin-right: 20px">삭제</button>
-          <button id="cancel-btn" class="back">취소</button>
-        </div>
-        <div id="loading-modal" class="loading" style="display: none">
+        <div id="loading-modal" class="loading" style="display: none; text-align: center">
           <span></span>
           <span></span>
           <span></span>
@@ -201,57 +188,65 @@
 
 </body>
 <script th:inline="javascript">
-    const originPage=window.location;
-    const originBodyCss=document.body.style;
-    let reportId;
-    let reportName;
-    let deleteContainer = document.getElementById("background-modal");
-    let deleteBlock = document.getElementById("delete-modal");
-    let loadingBlock = document.getElementById("loading-modal");
-    document.getElementById('cancel-btn').addEventListener('click',function (){
-        cancelModal();
-    })
-    let tmpReq;
-    let tmpJson;
-    document.getElementById('delete-btn').addEventListener('click',function(){
-        console.log('click');
-        /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
-        httpRequest = new XMLHttpRequest();
-        httpRequest.open('post','/report/delete?report-id='+reportId);
-        httpRequest.send();
-        loadingBlock.style.display='block';
-        document.getElementById("message-container").style.display='none';
-        httpRequest.onload = () => {
-            if(httpRequest.status === 200) {
-                const res = httpRequest.response;
-                console.log(res); //응답데이터 출력
-                alert('삭제되었습니다.');
-                window.location=originPage;
-            } else {
-                //에러발생
-                tmpReq=httpRequest;
-                tmpJson=JSON.parse(httpRequest.responseText);
-                console.log(tmpJson['message']);
-                alert(tmpJson['message']); //응답상태와 응답 메시지 출력
-                window.location=originPage;
-            }
-        }
-    });
-  function selectDeleteMusicalId(id,name){
-      reportId=id;
-      reportName=name;
-      deleteBlock.firstElementChild.innerText=`[${name}]`
-      document.body.style.overflowY='hidden';
-      openModal();
-  }
-  function openModal(){
+  let deleteContainer = document.getElementById("background-modal");
+  let deleteBlock = document.getElementById("delete-modal");
+  let loadingBlock = document.getElementById("loading-modal");
+  const originBodyCss=document.body.style;
+  async function reject_report(reportId){
+      /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+      httpRequest = new XMLHttpRequest();
+      httpRequest.open('delete','/report?report-id='+reportId);
+      httpRequest.send();
+      await open_modal();
+      httpRequest.onload = () => {
+          if(httpRequest.status === 200) {
+              const res = httpRequest.response;
+              console.log(res); //응답데이터 출력
+              alert('삭제되었습니다.');
+              window.location="/report";
+          } else {
+              //에러발생
+              let tmpJson=JSON.parse(httpRequest.responseText);
+              console.log(tmpJson['message']);
+              alert(tmpJson['message']); //응답상태와 응답 메시지 출력
+              window.location="/report";
+          }
+      }
+  };
+  async function report_process(reportId,type){
+      console.log('click');
+      /* 통신에 사용 될 XMLHttpRequest 객체 정의 */
+      httpRequest = new XMLHttpRequest();
+      httpRequest.open('post','/report?report-id='+reportId+'&type='+type);
+      httpRequest.send();
+      await open_modal();
+      httpRequest.onload = () => {
+          if(httpRequest.status === 200) {
+              const res = httpRequest.response;
+              console.log(res); //응답데이터 출력
+              alert('삭제되었습니다.');
+              window.location="/report";
+          } else {
+              //에러발생
+              let tmpJson=JSON.parse(httpRequest.responseText);
+              console.log(tmpJson['message']);
+              alert(tmpJson['message']); //응답상태와 응답 메시지 출력
+              window.location="/report";
+          }
+      }
+  };
+
+  async function open_modal(){
       deleteContainer.style.display='block';
       deleteBlock.style.display='block';
-  }
-  function cancelModal(){
+      loadingBlock.style.display='block';
+      document.body.style.overflowY='hidden';
+  };
+  async function cancel_modal(){
       deleteContainer.style.display='none';
       deleteBlock.style.display='none';
+      loadingBlock.style.display='none';
       document.body.style=originBodyCss;
-  }
+  };
 </script>
 </html>

@@ -74,4 +74,37 @@ public class ReportResponse {
               rm.getId(),rm.getNickname(),rm.getReportCount());
     }
   }
+  @AllArgsConstructor
+  @Getter
+  public static class ReportDetail{
+    private Long reportId;
+    private String type;
+    private LocalDateTime reportCreatedAt;
+
+    //review
+    private Long reviewId;
+    private String shortReview;
+    private String longReview;
+    private Double starRating;
+    private Long thumbsUp;
+    private ZonedDateTime reviewCreatedAt;
+
+    //member
+    private String memberId;
+    private String memberNickname;
+    private Integer warningCount;
+
+    //report member
+    private String reportMemberId;
+    private String reportMemberNickname;
+    private Integer reportCount;
+
+    public static ReportDetail of(Report r, Review re){
+      Member m = re.getMember();
+      Member rm = r.getReportMember();
+      return new ReportDetail(r.getId(),r.getType().getType(),r.getCreatedAt(),re.getId(),re.getShortReview(),
+              re.getLongReview(),re.getStarRating(),re.getThumbsUp(), re.getCreatedAt(),m.getId(),m.getNickname(),
+              m.getWarningCount(),rm.getId(),rm.getNickname(),rm.getReportCount());
+    }
+  }
 }
